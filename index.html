@@ -6,6 +6,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /></head>
 <body class="a-body ">
   <a-scene class="fullscreen" physics='gravity: -9.8; debug: false; restitution: 0.5"'>
+    <!-- Assets !-->
+    <a-assets>
+      <a-mixin id="checkpoint"></a-mixin>
+      <a-mixin id="checkpoint-hovered" color="#6CEEB5"></a-mixin>
+      <img id="sky" src="./textures/sky.jpg">
+    </a-assets>
+
     <!-- Ball !-->
     <a-sphere material="src: ./textures/ball.jpg" id="ball" class="throwable" dynamic-body position="0 5 0" radius="1" src="#ball"></a-sphere>
 
@@ -30,11 +37,11 @@
     <a-box position="-50 2.5 0" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:5;depth:100" id="back-wall"></a-box>
 
     <!-- Sky !-->
-    <a-sky color="#00ff00" material="color:#aaaaff" geometry=""></a-sky>
+    <a-sky src="#sky"></a-sky>
 
     <!-- Sun !-->
     <a-light type="directional" position="50 40 50" rotation="0 0 0" target="#directionaltarget">
-      <a-entity id="directionaltarget" position="-2 -6 2"></a-entity>
+      <a-entity id="directionaltarget" position="2 -6 -2"></a-entity>
     </a-light>
 
     <!-- Light night !-->
@@ -47,10 +54,6 @@
     <a-entity static-body rotation="90 90 0" geometry="height:100;width:100" id="ground" material="roughness:1;src:http://static.bfmtv.com/ressources/img/scorecenter/terrain.jpg"></a-entity>
 
     <!-- Checkpoints !-->
-    <a-assets>
-      <a-mixin id="checkpoint"></a-mixin>
-      <a-mixin id="checkpoint-hovered" color="#6CEEB5"></a-mixin>
-    </a-assets>
     <a-entity position="1 0 1">
       <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 29" color="#39BB82"></a-cylinder>
       <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 14" color="#39BB82"></a-cylinder>
