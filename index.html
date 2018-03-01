@@ -11,25 +11,33 @@
     var light = true;
 
     AFRAME.registerComponent('changelight', {
-        init: function() {
-            this.el.addEventListener('click', function (evt) {
-                var sun = document.getElementById("sun");
-                var lightScore = document.getElementsByClassName("lightScore");
-                var lightNight = document.getElementsByClassName("lightNight");
-                var sky = document.getElementById("skySphere");
-                light = !light;
+      init: function() {
+        this.el.addEventListener('click', function (evt) {
+          var sun = document.getElementById("sun");
+          var lightScore = document.getElementsByClassName("lightScore");
+          var lightNight = document.getElementsByClassName("lightNight");
+          var sky = document.getElementById("skySphere");
+          light = !light;
 
-                sky.setAttribute("src", light == true ? "#sky" : "#night");
-                lightNight[0].setAttribute("visible", !light);
-                lightNight[1].setAttribute("visible", !light);
-                lightNight[2].setAttribute("visible", !light);
-                lightNight[3].setAttribute("visible", !light);
-                lightScore[0].setAttribute("visible", !light);
-                lightScore[1].setAttribute("visible", !light);
-                lightScore[2].setAttribute("visible", !light);
-                sun.setAttribute("visible", light);
-            });
-        }
+          sky.setAttribute("src", light == true ? "#sky" : "#night");
+          lightNight[0].setAttribute("visible", !light);
+          lightNight[1].setAttribute("visible", !light);
+          lightNight[2].setAttribute("visible", !light);
+          lightNight[3].setAttribute("visible", !light);
+          lightScore[0].setAttribute("visible", !light);
+          lightScore[1].setAttribute("visible", !light);
+          lightScore[2].setAttribute("visible", !light);
+          sun.setAttribute("visible", light);
+        });
+      }
+    });
+
+    AFRAME.registerComponent('shootBall', {
+      init: function() {
+        this.el.addEventListener('click', function (evt) {
+
+        });
+      }
     });
   </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" />
@@ -48,7 +56,7 @@
     </a-assets>
 
     <!-- Ball !-->
-    <a-sphere src="#ball" id="ballSphere" dynamic-body position="0 10 0" radius="1" src="#ball" shadow="cast: true"></a-sphere>
+    <a-sphere src="#ball" shootBall id="ballSphere" dynamic-body position="0 10 0" radius="1" src="#ball" shadow="cast: true"></a-sphere>
 
     <!-- User !-->
     <a-entity wasd-controls position="0 2 33" camera="userHeight: 2" universal-controls="movementControls: checkpoint" checkpoint-controls="mode: animate; animateSpeed: 10">
@@ -67,26 +75,26 @@
     <a-box position="0 5 -50" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:10;width:100"></a-box>
 
     <!-- Sponsor !-->
-    <a-box position="-45 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-35 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-25 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-15 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-5 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="5 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="15 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="25 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="35 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="45 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-45 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-35 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-25 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-15 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-5 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="5 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="15 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="25 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="35 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="45 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-45 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-35 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-25 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-15 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-5 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="5 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="15 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="25 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="35 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="45 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-45 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-35 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-25 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-15 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-5 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="5 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="15 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="25 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="35 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="45 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
 
     <!-- Border !-->
     <a-box position="49.5 2.5 0.5" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="depth:100;height:4"></a-box>
