@@ -2,8 +2,38 @@
   <title>Foot</title>
   <meta name="description" content="Foot" />
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
-  <script src="./aframe-extras.min.js"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" /></head>
+  <script src="./scripts/aframe-extras.min.js"></script>
+  <script src="./scripts/script.js"></script>
+  <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
+  <script>
+    var rightScore = 0;
+    var leftScore = 0;
+    var light = true;
+
+    AFRAME.registerComponent('changelight', {
+        init: function() {
+            this.el.addEventListener('click', function (evt) {
+                var sun = document.getElementById("sun");
+                var lightScore = document.getElementsByClassName("lightScore");
+                var lightNight = document.getElementsByClassName("lightNight");
+                var sky = document.getElementById("skySphere");
+                light = !light;
+
+                sky.setAttribute("src", light == true ? "#sky" : "#night");
+                lightNight[0].setAttribute("visible", !light);
+                lightNight[1].setAttribute("visible", !light);
+                lightNight[2].setAttribute("visible", !light);
+                lightNight[3].setAttribute("visible", !light);
+                lightScore[0].setAttribute("visible", !light);
+                lightScore[1].setAttribute("visible", !light);
+                lightScore[2].setAttribute("visible", !light);
+                sun.setAttribute("visible", light);
+            });
+        }
+    });
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" />
+</head>
 <body class="a-body ">
   <a-scene class="fullscreen" physics='gravity: -9.8; debug: false; restitution: 0.5"'>
     <!-- Assets !-->
@@ -11,10 +41,14 @@
       <a-mixin id="checkpoint"></a-mixin>
       <a-mixin id="checkpoint-hovered" color="#6CEEB5"></a-mixin>
       <img id="sky" src="./textures/sky.jpg">
+      <img id="night" src="./textures/night.png">
+      <img id="ball" src="./textures/ball.jpg">
+      <img id="ground" src="./textures/terrain.jpg">
+      <img id="sunTexture" src="./textures/sun.jpg">
     </a-assets>
 
     <!-- Ball !-->
-    <a-sphere material="src: ./textures/ball.jpg" id="ball" class="throwable" dynamic-body position="0 5 0" radius="1" src="#ball"></a-sphere>
+    <a-sphere src="#ball" id="ballSphere" dynamic-body position="0 10 0" radius="1" src="#ball" shadow="cast: true"></a-sphere>
 
     <!-- User !-->
     <a-entity wasd-controls position="0 2 33" camera="userHeight: 2" universal-controls="movementControls: checkpoint" checkpoint-controls="mode: animate; animateSpeed: 10">
@@ -23,24 +57,46 @@
     </a-entity>
 
     <!-- Stadium !-->
-    <a-box position="0 5 50" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:10;width:100" id="right-stair1"></a-box>
-    <a-box position="0 4 48" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:8;depth:5;width:100" id="right-stair2"></a-box>
-    <a-box position="0 3 45" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:6;depth:5;width:100" id="right-stair3"></a-box>
-    <a-box position="0 3 -45" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:6;depth:5;width:100" id="left-stair3"></a-box>
-    <a-box position="0 2 42" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:4;depth:5;width:100" id="right-stair4"></a-box>
-    <a-box position="0 1 38" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:2;depth:5;width:100" id="right-stair5"></a-box>
-    <a-box position="0 1 -38" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:2;depth:5;width:100" id="left-stair5"></a-box>
-    <a-box position="0 2 -42.01" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:4;depth:5;width:100" id="left-stair4"></a-box>
-    <a-box position="0 5 -50" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:10;width:100" id="left-stair1"></a-box>
-    <a-box position="0 4 -48" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:8;depth:5;width:100" id="left-stair2"></a-box>
-    <a-box position="49.5 2.5 0.5" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="depth:102;height:5" id="front-wall"></a-box>
-    <a-box position="-50 2.5 0" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:5;depth:100" id="back-wall"></a-box>
+    <a-box position="0 5 50" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:10;width:100"></a-box>
+    <a-box position="0 4 48" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:8;depth:5;width:100"></a-box>
+    <a-box position="0 3 45" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:6;depth:5;width:100"></a-box>
+    <a-box position="0 2 42" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:4;depth:5;width:100"></a-box>
+    <a-box position="0 2 -42" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:4;depth:5;width:100"></a-box>
+    <a-box position="0 3 -45" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:6;depth:5;width:100"></a-box>
+    <a-box position="0 4 -48" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:8;depth:5;width:100"></a-box>
+    <a-box position="0 5 -50" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:10;width:100"></a-box>
+
+    <!-- Sponsor !-->
+    <a-box position="-45 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-35 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-25 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-15 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-5 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="5 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="15 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="25 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="35 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="45 2 39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-45 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-35 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-25 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-15 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-5 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="5 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="15 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="25 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="35 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="45 2 -39" color="#4CC3D9" shadow="" material="shader:gif;src:url(./textures/sponsor.gif);" geometry="height:4;depth:1;width:10"></a-box>
+
+    <!-- Border !-->
+    <a-box position="49.5 2.5 0.5" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="depth:100;height:4"></a-box>
+    <a-box position="-50 2.5 0" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="height:4;depth:100"></a-box>
 
     <!-- Sky !-->
-    <a-sky src="#sky"></a-sky>
+    <a-sky id="skySphere" src="#sky"></a-sky>
 
     <!-- Sun !-->
-    <a-light type="directional" position="50 40 50" rotation="0 0 0" target="#directionaltarget">
+    <a-light id="sun" type="directional" position="50 40 50" rotation="0 0 0" target="#directionaltarget">
       <a-entity id="directionaltarget" position="2 -6 -2"></a-entity>
     </a-light>
 
@@ -49,9 +105,13 @@
     <a-entity position="-45 20 75" geometry="height:40" material="color:#bbbbbb" id="poteau2"></a-entity>
     <a-entity position="45 20 -75" geometry="height:40" material="color:#bbbbbb" id="poteau3"></a-entity>
     <a-entity position="-45 20 -75" geometry="height:40" material="color:#bbbbbb" id="poteau4"></a-entity>
+    <a-entity visible=false material="src: #sunTexture" geometry="primitive: sphere;radius: 3" class="lightNight" position="-45 40 -75" rotation="-170 20 0" light="angle:40;intensity:1;type:spot"></a-entity>
+    <a-entity visible=false material="src: #sunTexture" geometry="primitive: sphere;radius: 3" class="lightNight" position="45 40 -75" rotation="-170 -20 0" light="angle:40;intensity:0.3;type:spot"></a-entity>
+    <a-entity visible=false material="src: #sunTexture" geometry="primitive: sphere;radius: 3" class="lightNight" position="-45 40 75" rotation="-10 -20 0" light="angle:40;intensity:0.3;type:spot"></a-entity>
+    <a-entity visible=false material="src: #sunTexture" geometry="primitive: sphere;radius: 3" class="lightNight" position="45 40 75" rotation="-10 20 0" light="angle:40;intensity:0.3;type:spot"></a-entity>
 
     <!-- Ground !-->
-    <a-entity static-body rotation="90 90 0" geometry="height:100;width:100" id="ground" material="roughness:1;src:http://static.bfmtv.com/ressources/img/scorecenter/terrain.jpg"></a-entity>
+    <a-entity static-body rotation="90 90 0" geometry="height:100;width:100" id="footGround" material="roughness:1; src: #ground"></a-entity>
 
     <!-- Checkpoints !-->
     <a-entity position="1 0 1">
@@ -87,7 +147,10 @@
     </a-entity>
 
     <!-- Collide !-->
-    <a-entity geometry="depth:70;height:100;width:100" visible="false"></a-entity>
+    <a-entity static-body position="-50 25 0" visible="false" geometry="height:50;depth:70"></a-entity>
+    <a-entity static-body position="50 25 0" visible="false" geometry="height:50;depth:70"></a-entity>
+    <a-entity static-body position="0 25 -35" visible="false" geometry="height:50;width:100"></a-entity>
+    <a-entity static-body position="0 25 35" visible="false" geometry="height:50;width:100"></a-entity>
 
     <!-- Goal Right !-->
     <a-cylinder id="goalTopRight" static-body position="43 5 0" height="10" radius="0.2" color="white" rotation="90 0 0"></a-cylinder>
@@ -106,6 +169,20 @@
     <a-cylinder rotation="-30 -90 0" static-body position="-44.7 2.5 -5" height="6" radius="0.2" color="white"></a-cylinder>
     <a-plane static-body height="6" width="10" material="src: ./textures/net.png" material="repeat: 2 2;" transparent="true" rotation="30 90 0" position="-44.7 2.5 0"></a-plane>
     <a-entity position="-43 2.5 0" rotation="0 90 0" visible="false" geometry="height:5;width:10;primitive:plane"></a-entity>
+
+    <!-- Colision goal !-->
+    <a-entity position="43 2.5 0" visible="false" geometry="depth:10;height:5" id="rightGoal"></a-entity>
+    <a-entity position="-43 2.5 0" visible="false" geometry="depth:10;height:5" id="leftGoal"></a-entity>
+
+    <!-- Box Goal !-->
+    <a-entity static-body position="-1 0 0" rotation="0 0 45" geometry="width:5;height:5;depth:5"></a-entity>
+
+    <!-- Score !-->
+    <a-entity changelight position="0 40 -34" geometry="width:50;height:20;primitive:plane" material="color: #fff"></a-entity>
+    <a-entity id="scoreBoard" position="55 40 -33" text__scoreboard="value:Score       0 : 0;width:150;lineHeight:10;height:50"></a-entity>
+    <a-entity class="lightScore" position="20 20 -29" rotation="80 -30 0" visible=false light="angle:50;intensity:0.3;type:spot"></a-entity>
+    <a-entity class="lightScore" position="-20 20 -29" rotation="80 30 0" visible=false light="angle:50;intensity:0.3;type:spot"></a-entity>
+    <a-entity class="lightScore" position="0 20 -29" rotation="80 0 0" visible=false light="angle:50;intensity:0.3;type:spot"></a-entity>
   </a-scene>
 </body>
 </html>
