@@ -3,7 +3,6 @@
   <meta name="description" content="Foot" />
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="./scripts/aframe-extras.min.js"></script>
-  <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
   <script>
     var rightScore = 0;
     var leftScore = 0;
@@ -88,17 +87,14 @@
       <img id="ground" src="./textures/terrain.jpg">
       <img id="sunTexture" src="./textures/sun.jpg">
       <a-asset-item id="ball" src="./textures/models/scene.gltf"></a-asset-item>
-      <audio id="vuvu" src="vuvu.mp3" preload="auto"></audio>
     </a-assets>
 
     <!-- Vuvuzela !-->
     <a-entity sound="src: ./vuvu.mp3"></a-entity>
 
     <!-- Ball !-->
-    <a-entity id="ballParent">
-      <a-entity geometry="primitive: sphere" dynamic-body force-pushable position="0 10 0" id="ballSphere">
-        <a-entity gltf-model="#ball"></a-entity>
-      </a-entity>
+    <a-entity position="0 10 0" id="ballSphere" geometry="primitive: sphere" dynamic-body="shape: sphere" force-pushable>
+      <a-entity gltf-model="#ball"></a-entity>
     </a-entity>
 
     <!-- User !-->
