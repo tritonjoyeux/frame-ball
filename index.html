@@ -3,7 +3,6 @@
   <meta name="description" content="Foot" />
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="./scripts/aframe-extras.min.js"></script>
-  <script src="./scripts/script.js"></script>
   <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
   <script>
     var rightScore = 0;
@@ -32,34 +31,78 @@
       }
     });
 
-    AFRAME.registerComponent('shootBall', {
-      init: function() {
-        this.el.addEventListener('click', function (evt) {
+    AFRAME.registerComponent('force-pushable', {
+      schema: {
+        force: { default: 300 }
+      },
+      init: function () {
+        var scoreBoard = document.getElementById("scoreBoard");
+        this.pStart = new THREE.Vector3();
+        this.sourceEl = this.el.sceneEl.querySelector('[camera]');
+        this.el.addEventListener('click', this.forcePush.bind(this));
+        this.el.addEventListener('collide', (element) => {
+          var ball = document.getElementById("ballParent");
+          var entity = document.querySelector('[sound]');
 
+          if(element.detail.body.el.id == "rightGoal") {
+            leftScore++;
+            scoreBoard.setAttribute("text__scoreboard", "value:Score       "+leftScore+" : "+rightScore+";width:150;lineHeight:10;height:50")
+            entity.components.sound.playSound();
+            console.log(entity)
+            setTimeout(() => {
+              entity.components.sound.stopSound()
+            }, 10000)
+            //ball.innerHTML = '<a-entity geometry="primitive: sphere" dynamic-body force-pushable position="0 10 0" id="ballSphere"><a-entity gltf-model="#ball"></a-entity></a-entity>'
+          }else if(element.detail.body.el.id == "leftGoal") {
+            rightScore++;
+            scoreBoard.setAttribute("text__scoreboard", "value:Score       "+leftScore+" : "+rightScore+";width:150;lineHeight:10;height:50")
+            entity.components.sound.playSound();
+            setTimeout(() => {
+              entity.components.sound.stopSound()
+            }, 10000)
+            //ball.innerHTML = '<a-entity geometry="primitive: sphere" dynamic-body force-pushable position="0 10 0" id="ballSphere"><a-entity gltf-model="#ball"></a-entity></a-entity>'
+          }
         });
+      },
+      forcePush: function () {
+        var force,
+        el = this.el,
+        pStart = this.pStart.copy(this.sourceEl.getAttribute('position'));
+        force = el.body.position.vsub(pStart);
+        force.normalize();
+        force.scale(this.data.force, force);
+        el.body.applyImpulse(force, el.body.position);
       }
     });
   </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono" media="all" />
 </head>
-<body class="a-body ">
-  <a-scene class="fullscreen" physics='gravity: -9.8; debug: false; restitution: 0.5"'>
+<body class="a-body">
+  <a-scene stats class="fullscreen">
     <!-- Assets !-->
     <a-assets>
       <a-mixin id="checkpoint"></a-mixin>
       <a-mixin id="checkpoint-hovered" color="#6CEEB5"></a-mixin>
       <img id="sky" src="./textures/sky.jpg">
-      <img id="night" src="./textures/night.png">
-      <img id="ball" src="./textures/ball.jpg">
+      <img id="night" src="./textures/night.jpg">
       <img id="ground" src="./textures/terrain.jpg">
       <img id="sunTexture" src="./textures/sun.jpg">
+      <a-asset-item id="ball" src="./textures/models/scene.gltf"></a-asset-item>
+      <audio id="vuvu" src="vuvu.mp3" preload="auto"></audio>
     </a-assets>
 
+    <!-- Vuvuzela !-->
+    <a-entity sound="src: ./vuvu.mp3"></a-entity>>
+
     <!-- Ball !-->
-    <a-sphere src="#ball" shootBall id="ballSphere" dynamic-body position="0 10 0" radius="1" src="#ball" shadow="cast: true"></a-sphere>
+    <a-entity id="ballParent">
+      <a-entity geometry="primitive: sphere" dynamic-body force-pushable position="0 10 0" id="ballSphere">
+        <a-entity gltf-model="#ball"></a-entity>
+      </a-entity>
+    </a-entity>
 
     <!-- User !-->
-    <a-entity wasd-controls position="0 2 33" camera="userHeight: 2" universal-controls="movementControls: checkpoint" checkpoint-controls="mode: animate; animateSpeed: 10">
+    <a-entity wasd-controls position="0 2 33" camera="userHeight: 2" universal-controls="movementControls: checkpoint" checkpoint-controls="mode: animate; animateSpeed: 15">
       <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03;" material="color: #CCC; shader: flat;">
       </a-entity>
     </a-entity>
@@ -75,38 +118,36 @@
     <a-box position="0 5 -50" color="#4CC3D9" shadow="" material="color:#b01c21" geometry="height:10;width:100"></a-box>
 
     <!-- Sponsor !-->
-    <a-box position="-45 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-35 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-25 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-15 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-5 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="5 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="15 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="25 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="35 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="45 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-45 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-35 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-25 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-15 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="-5 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="5 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="15 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="25 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="35 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"></a-box>
-    <a-box position="45 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"></a-box>
+    <a-box position="-45 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-35 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-25 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-15 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-5 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="5 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="15 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="25 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="35 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="45 2 39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-45 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-35 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-25 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-15 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="-5 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="5 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="15 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="25 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="35 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
+    <a-box position="45 2 -39" color="#4CC3D9" shadow="" material="src:./textures/pub2.png;" geometry="height:4;depth:1;width:10"><a-animation repeat="indefinite" attribute="rotation" to="360 0 0" dur="10000"></a-animation></a-box>
 
     <!-- Border !-->
-    <a-box position="49.5 2.5 0.5" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="depth:100;height:4"></a-box>
-    <a-box position="-50 2.5 0" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="height:4;depth:100"></a-box>
+    <a-box position="49.5 2.5 0.5" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="depth:100;height:5"></a-box>
+    <a-box position="-50 2.5 0" shadow="" material="src: ./textures/wall.jpg; repeat: 10 1" geometry="height:5;depth:100"></a-box>
 
     <!-- Sky !-->
-    <a-sky id="skySphere" src="#sky"></a-sky>
+    <a-sky id="skySphere" src="#sky" geometry="radius: 500"></a-sky>
 
     <!-- Sun !-->
-    <a-light id="sun" type="directional" position="50 40 50" rotation="0 0 0" target="#directionaltarget">
-      <a-entity id="directionaltarget" position="2 -6 -2"></a-entity>
-    </a-light>
+    <a-light id="sun" type="ambient" light="intensity: 0.5" position="0 40 0" rotation="0 0 0"></a-light>
 
     <!-- Light night !-->
     <a-entity position="45 20 75" geometry="height:40" material="color:#bbbbbb" id="poteau1"></a-entity>
@@ -119,46 +160,47 @@
     <a-entity visible=false material="src: #sunTexture" geometry="primitive: sphere;radius: 3" class="lightNight" position="45 40 75" rotation="-10 20 0" light="angle:40;intensity:0.3;type:spot"></a-entity>
 
     <!-- Ground !-->
-    <a-entity static-body rotation="90 90 0" geometry="height:100;width:100" id="footGround" material="roughness:1; src: #ground"></a-entity>
+    <a-plane static-body rotation="-90 90 0" geometry="height:100;width:100" id="footGround" material="roughness:1; src: #ground"></a-plane>
+    <a-entity static-body position="0 100 0" rotation="90 90 0" visible="false" geometry="height:100;width:100"></a-entity>
 
     <!-- Checkpoints !-->
     <a-entity position="1 0 1">
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 29" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 14" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 -1" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 -16" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-31 0 -31 " color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-31 0 29" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-31 0 14" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-31 0 -1" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-31 0 -16" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-31 0 -31 " color="#39BB82"></a-cylinder>
 
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-11 0 29" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-11 0 14" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-11 0 -1" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-11 0 -16" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-11 0 -31 " color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-16 0 29" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-16 0 14" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-16 0 -1" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-16 0 -16" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-16 0 -31 " color="#39BB82"></a-cylinder>
 
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-1 0 29" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-1 0 14" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-1 0 -1" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-1 0 -16" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="-1 0 -31 " color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-1 0 29" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-1 0 14" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-1 0 -1" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-1 0 -16" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="-1 0 -31 " color="#39BB82"></a-cylinder>
 
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="9 0 29" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="9 0 14" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="9 0 -1" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="9 0 -16" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="9 0 -31 " color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="14 0 29" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="14 0 14" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="14 0 -1" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="14 0 -16" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="14 0 -31 " color="#39BB82"></a-cylinder>
 
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="29 0 29" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="29 0 14" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="29 0 -1" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="29 0 -16" color="#39BB82"></a-cylinder>
-      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="1.1" position="29 0 -31 " color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="29 0 29" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="29 0 14" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="29 0 -1" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="29 0 -16" color="#39BB82"></a-cylinder>
+      <a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.5" position="29 0 -31 " color="#39BB82"></a-cylinder>
     </a-entity>
 
     <!-- Collide !-->
-    <a-entity static-body position="-50 25 0" visible="false" geometry="height:50;depth:70"></a-entity>
-    <a-entity static-body position="50 25 0" visible="false" geometry="height:50;depth:70"></a-entity>
-    <a-entity static-body position="0 25 -35" visible="false" geometry="height:50;width:100"></a-entity>
-    <a-entity static-body position="0 25 35" visible="false" geometry="height:50;width:100"></a-entity>
+    <a-entity static-body position="-50 50 0" visible="false" geometry="height:100;depth:70"></a-entity>
+    <a-entity static-body position="50 50 0" visible="false" geometry="height:100;depth:70"></a-entity>
+    <a-entity static-body position="0 50 -35" visible="false" geometry="height:100;width:100"></a-entity>
+    <a-entity static-body position="0 50 35" visible="false" geometry="height:100;width:100"></a-entity>
 
     <!-- Goal Right !-->
     <a-cylinder id="goalTopRight" static-body position="43 5 0" height="10" radius="0.2" color="white" rotation="90 0 0"></a-cylinder>
@@ -179,11 +221,8 @@
     <a-entity position="-43 2.5 0" rotation="0 90 0" visible="false" geometry="height:5;width:10;primitive:plane"></a-entity>
 
     <!-- Colision goal !-->
-    <a-entity position="43 2.5 0" visible="false" geometry="depth:10;height:5" id="rightGoal"></a-entity>
-    <a-entity position="-43 2.5 0" visible="false" geometry="depth:10;height:5" id="leftGoal"></a-entity>
-
-    <!-- Box Goal !-->
-    <a-entity static-body position="-1 0 0" rotation="0 0 45" geometry="width:5;height:5;depth:5"></a-entity>
+    <a-entity static-body position="43 2.5 0" visible="false" geometry="depth:10;height:5" id="rightGoal"></a-entity>
+    <a-entity static-body position="-43 2.5 0" visible="false" geometry="depth:10;height:5" id="leftGoal"></a-entity>
 
     <!-- Score !-->
     <a-entity changelight position="0 40 -34" geometry="width:50;height:20;primitive:plane" material="color: #fff"></a-entity>
