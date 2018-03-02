@@ -42,25 +42,25 @@
         this.el.addEventListener('click', this.forcePush.bind(this));
         this.el.addEventListener('collide', (element) => {
           var ball = document.getElementById("ballParent");
+          var ballSphere = document.getElementById("ballSphere");
           var entity = document.querySelector('[sound]');
 
           if(element.detail.body.el.id == "rightGoal") {
             leftScore++;
             scoreBoard.setAttribute("text__scoreboard", "value:Score       "+leftScore+" : "+rightScore+";width:150;lineHeight:10;height:50")
+
             entity.components.sound.playSound();
-            console.log(entity)
             setTimeout(() => {
               entity.components.sound.stopSound()
             }, 10000)
-            //ball.innerHTML = '<a-entity geometry="primitive: sphere" dynamic-body force-pushable position="0 10 0" id="ballSphere"><a-entity gltf-model="#ball"></a-entity></a-entity>'
           }else if(element.detail.body.el.id == "leftGoal") {
             rightScore++;
             scoreBoard.setAttribute("text__scoreboard", "value:Score       "+leftScore+" : "+rightScore+";width:150;lineHeight:10;height:50")
+
             entity.components.sound.playSound();
             setTimeout(() => {
-              entity.components.sound.stopSound()
+             entity.components.sound.stopSound()
             }, 10000)
-            //ball.innerHTML = '<a-entity geometry="primitive: sphere" dynamic-body force-pushable position="0 10 0" id="ballSphere"><a-entity gltf-model="#ball"></a-entity></a-entity>'
           }
         });
       },
@@ -92,7 +92,7 @@
     </a-assets>
 
     <!-- Vuvuzela !-->
-    <a-entity sound="src: ./vuvu.mp3"></a-entity>>
+    <a-entity sound="src: ./vuvu.mp3"></a-entity>
 
     <!-- Ball !-->
     <a-entity id="ballParent">
